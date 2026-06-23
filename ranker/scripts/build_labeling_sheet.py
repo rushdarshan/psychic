@@ -1,4 +1,5 @@
 import csv, json, os, random, sys
+# Builds a stratified labeling sheet from 70 candidates across score deciles
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
 random.seed(42)
 
