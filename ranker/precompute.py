@@ -5,6 +5,8 @@ import os
 import sys
 import hashlib
 
+# Precomputes and caches candidate embeddings offline (GPU: 3.5min, CPU: 90min)
+
 from semantic import load_model, embed_texts, build_candidate_text, EMBEDDING_DIM
 import numpy as np
 
