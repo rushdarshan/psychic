@@ -1,5 +1,6 @@
 """Label-free proxy evaluation for candidate ranker.
 
+Metrics updated after Iter2 experiments (Kendall tau 0.915 vs Iter1).
 Three metrics that triangulate ranking quality without ground-truth labels:
   (a) Pseudo-positive AUC    — top-3 as weak positives, 3000 random as negatives
   (b) Honeypot leak rate     — % of honeypots in top-100
