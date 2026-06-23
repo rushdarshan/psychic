@@ -3,6 +3,8 @@ import numpy as np
 EMBEDDING_MODEL = "all-MiniLM-L6-v2"
 EMBEDDING_DIM = 384
 
+# 3 sub-spans with preamble stripping applied to span 1
+
 
 def load_model():
     from sentence_transformers import SentenceTransformer
