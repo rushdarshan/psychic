@@ -1,4 +1,6 @@
-"""Compare iteration 1 vs iteration 2 submissions."""
+"""Compare iteration 1 vs iteration 2 submissions using Kendall tau rank correlation.
+
+Iter2 result: tau = 0.915 vs Iter1 (no meaningful movement in top-10)."""
 import csv
 import json
 import sys
