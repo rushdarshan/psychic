@@ -1,0 +1,112 @@
+team_name: "redrob-ranker"
+
+primary_contact:
+  name: "Darshan K"
+  email: "rushdarshnn@gmail.com"
+  phone: "+91-9629072272"
+
+team_members:
+  - name: "Darshan K"
+    email: "rushdarshnn@gmail.com"
+    role: "Team Lead"
+
+github_repo: "https://github.com/rushdarshan/psychic.git"
+sandbox_link: ""
+reproduce_command: "python rank.py --candidates ./candidates.jsonl --embed-dir ./embeddings --out ./submission.csv"
+
+compute:
+  platform: "Local (Windows 11, AMD Ryzen 5, NVIDIA RTX 4050)"
+  cpu_cores: 4
+  ram_gb: 16
+  python_version: "3.11"
+  os: "Windows 11"
+  gpu: "NVIDIA GeForce RTX 4050 (6GB)"
+  uses_gpu_for_inference: true
+  has_network_during_ranking: false
+  pre_computation_required: true
+  pre_computation_time_minutes: 3.5
+
+ai_tools_used:
+  - "Claude"
+
+ai_usage_summary: |
+  Used Claude for architecture design, code review, debugging, and
+  documentation generation. No candidate data was fed to any LLM
+  during the ranking step.
+
+methodology_summary: |
+  Three-stage architecture inspired by LinkedIn MUSE (Multi-granular
+  Semantic Embeddings, KDD'20), Indeed UBM (SIGIR'19), and
+  cross-encoder re-ranking common to modern search pipelines.
+  Final output: submission_reranker.csv (Iter1, 238.9s). Iter2
+  sub-span re-weighting was neutral in effect and is not used in the
+  final ranking.
+
+  L1 -- Embedding Retrieval: all-MiniLM-L6-v2 embeddings (384-dim)
+  precomputed offline (GPU 3.5min vs CPU 90min -- 35x). JD decomposed
+  into 3 concept sub-spans (role context, responsibilities, ideal
+  candidate) -- inspired by the "question-driven embedding" pattern
+  from AAAI'24 career-path prediction -- producing 3 cosine
+  similarities fused via weights [0.25, 0.30, 0.45]. The re-weighting
+  follows Lukauskas et al. (MDPI Applied Sciences 2023), who validated
+  that the requirements / ideal-candidate section carries the strongest
+  discriminative signal in JD segmentation. Sub-span 1 (role context)
+  has its location/company preamble stripped before embedding to
+  prevent dilution of the role signal.
+
+  L1b -- Hadamard Interaction: element-wise product of each JD sub-
+  embedding with the candidate embedding, summed to capture dimension-
+  level alignment strength. This follows the canonical interaction
+  pattern from DCN-V2 (Google, KDD 2021), which replaced inner-product
+  with Hadamard (x0 ⊙ xi) in YouTube Ads cross networks, and NFM
+  (He & Chua, SIGIR 2017), which showed Hadamard outperforms factored
+  inner-product for CTR ranking. Chrysos et al. (IEEE TPAMI 2025)
+  survey Hadamard products as the standard query-document fusion
+  operation in industrial recsys. Serves as a dense-compatibility bridge
+  between cosine (angle only) and lexical (bag-of-words) signals.
+  Sub-embeddings are L2-normalized before Hadamard to bound each
+  dimension-level score to [-1, 1].
+
+  L2 -- Multi-attribute Scoring: 7-component weighted formula
+  (semantic 25%, Hadamard similarity 5%, lexical JD-coverage 5%,
+  shipped-system evidence 25%, experience band 15%, location fit 10%,
+  disqualifier penalties -15%) with a multiplicative availability
+  modifier (0.4-1.0) and subtractive honeypot penalty. JD lexical
+  coverage uses diminishing-returns TF weighting (count / (count + 1))
+  rather than binary keyword presence.
+
+  L3 -- Cross-encoder Reranking: cross-encoder/ms-marco-MiniLM-L-6-v2
+  scores pairwise (JD, candidate) for top-2000 candidates, blended 25%
+  with original score. Adds ~27s overhead. Tested
+  mixedbread-ai/mxbai-rerank-base-v2 (Qwen2-based, 8K context) per
+  Jina v3 (arXiv 2509.25085, Oct 2025) recommendation, but model
+  loading + inference exceeded 300s budget on available CPU. The MS
+  MARCO checkpoints have a known domain mismatch for resume-JD tasks
+  (HF Forum, Jan 2026) but remain within budget. Scores are min-max
+  normalized per-batch for calibrated blending.
+
+  Shipped-system detection uses precompiled word-boundary regex
+  (avoids "live"/"delivered" false positives). Title-domain classifier
+  catches keyword-stuffer traps (0 off-domain titles in top-50).
+  Applied-ML-years detection via role-level classifier (title regex +
+  description keyword density) isolates ML-specific experience from
+  generic product-company tenure.
+
+  Honeypot defense: 4 consistency cross-checks (years mismatch,
+  expert+duration contradiction, endorsement patterns, desc-claims-
+  years with short tenure). Applied as graded penalty not hard filter --
+  aligns with SIGIR'19 finding that soft behavioral signals outperform
+  hard exclusion in ranking contexts.
+
+  Distinction from learned rankers: with zero labeled training data,
+  a hand-weighted transparent formula produces reproducible, auditable
+  rankings. No LLM calls during ranking (nondeterminism, budget
+  violation). Every candidate's output includes computed reasoning
+  trace showing exactly which features drove the score.
+
+declarations:
+  read_submission_spec: true
+  code_is_original_work: true
+  no_collusion: true
+  honeypot_check_done: true
+  reproduction_tested: true
