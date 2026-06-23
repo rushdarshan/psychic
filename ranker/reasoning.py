@@ -1,3 +1,5 @@
+# Reasoning utilities: truncation, CSV escaping, and rank consistency checks
+
 def truncate_reasoning(text, max_chars=200):
     if len(text) > max_chars:
         return text[:max_chars - 3] + "..."
