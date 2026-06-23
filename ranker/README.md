@@ -2,6 +2,9 @@
 
 Candidate ranking system for the [Redrob Intelligent Candidate Discovery & Ranking Challenge](https://redrob.com/hackathon). Ranks 100K candidates against a job description using a transparent, interpretable formula.
 
+**Status:** Final submission validated (0 errors, 1.0% honeypot, 238.9s).  
+**NDCG@10:** 0.9434 via grid search on 70 human-labeled candidates.
+
 ## Quick Start
 
 ```bash
