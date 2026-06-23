@@ -9,6 +9,7 @@ from jd_rules import (
 
 
 def extract_features(candidate):
+    # 200+ features: exp, company type, location, skills, shipped-systems, penalties
     profile = candidate.get("profile", {})
     career_history = candidate.get("career_history", [])
     skills = candidate.get("skills", [])
