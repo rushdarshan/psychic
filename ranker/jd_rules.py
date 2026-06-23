@@ -1,5 +1,7 @@
 import re
 
+# Keyword rules and classifiers for Senior AI Engineer JD matching
+
 
 def _alternation(phrases):
     return re.compile(
