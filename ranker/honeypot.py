@@ -17,7 +17,7 @@ def compute_honeypot_score(candidate):
 
     if years_exp > 0 and career_months > 0:
         ratio = career_years / years_exp
-        if ratio < 0.3 or ratio > 2.5:
+        if ratio < 0.3 or ratio > 2.5:  # soft check per SIGIR 2019 approach
             total_penalty += 1.5
             checks.append(
                 f"years_exp({years_exp}) vs career_months({career_months}) mismatch"
