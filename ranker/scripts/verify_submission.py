@@ -1,5 +1,6 @@
 """Verification script for Redrob Candidate Ranker submission.
 
+Includes runtime benchmark, honeypot audit, and trap-candidate detection.
 Checks:
 1. Wall-clock time for scoring (rule-only mode)
 2. Honeypot rate in the actual top-100 output
