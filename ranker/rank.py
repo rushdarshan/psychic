@@ -14,9 +14,9 @@ from semantic import (
 )
 from scoring import compute_candidate_score
 
-CROSS_ENCODER_MODEL = "cross-encoder/ms-marco-MiniLM-L-6-v2"
-RERANK_TOP_K = 2000
-RERANK_BLEND_WEIGHT = 0.25
+CROSS_ENCODER_MODEL = "cross-encoder/ms-marco-MiniLM-L-6-v2"  # 22M params, ~27s/2000 pairs
+RERANK_TOP_K = 2000  # budget: 2000 x 2 inferences at ~13ms each
+RERANK_BLEND_WEIGHT = 0.25  # tuned: 75% L2 + 25% cross-encoder
 
 
 AUTO_DETECT_PATHS = [
